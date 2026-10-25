@@ -740,6 +740,10 @@ class Component extends DCLogic {
     this.cdTimer = setInterval(() => this.setState({ cd: countdown() }), 1000);
     this.layout();
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => this.layout());
+    // Re-measure once web fonts actually arrive (fonts.ready can resolve before they swap in).
+    this.relayout = () => { this.layout(); if (this.A.phase === 'idle') this.frame(this.curT || 0); };
+    if (document.fonts && document.fonts.addEventListener) document.fonts.addEventListener('loadingdone', this.relayout);
+    [300, 900, 2000].forEach(ms => setTimeout(this.relayout, ms));
     this.setupReveals();
     if (this.props.showIntro ?? true) this.startIntro(); else this.finish();
     this.scrollFx();
@@ -761,19 +765,32 @@ class Component extends DCLogic {
     let ch2 = Math.min(vh * .82, 680); const cw2 = Math.min(ch2 / 1.42, vw * .88); ch2 = cw2 * 1.42;
     this.L = { vw, vh, envW, envH, cw1: envW * .9, ch1: envH * .86, cw2, ch2 };
     ENV_PARTS.forEach(k => { if (R[k]) R[k].style.width = envW + 'px'; });
+    // Phones: rather than shrinking the blessing text to fit above the envelope,
+    // slide the waiting envelope down into the empty space below it.
+    const pGap = Math.min(22, Math.max(12, vh * .022));
+    let shift = 0;
     if (R.introHead) {
       const H = R.introHead;
       H.style.top = ''; H.style.zoom = '';
       const gap = Math.min(32, Math.max(20, vh * .032));
-      const avail = vh / 2 - envH / 2 - gap - (vw < 700 ? 64 : 12);
+      const reserve = vw < 700 ? 56 : 12;
       const need = H.offsetHeight;
+      let avail = vh / 2 - envH / 2 - gap - reserve;
+      if (need > avail && (this.A.phase === 'idle')) {
+        const pH = R.introPrompt ? R.introPrompt.offsetHeight : 60;
+        const freeBelow = vh / 2 - envH / 2 - pGap - pH - 16;
+        shift = Math.max(0, Math.min(need - avail, freeBelow));
+        avail += shift;
+      }
       if (need > avail && avail > 0) {
         const z = Math.max(.6, avail / need);
         H.style.zoom = z;
-        H.style.bottom = ((vh / 2 + envH / 2 + gap) / z) + 'px';
-      } else H.style.bottom = '';
+        H.style.bottom = ((vh / 2 - shift + envH / 2 + gap) / z) + 'px';
+      } else H.style.bottom = (vh / 2 - shift + envH / 2 + gap) + 'px';
     }
-    if (R.introPrompt) R.introPrompt.style.top = (vh / 2 + envH / 2 + Math.min(22, Math.max(12, vh * .022))) + 'px';
+    this.shift = shift;
+    if (R.scene) { R.scene.style.transition = ''; R.scene.style.top = shift + 'px'; R.scene.style.bottom = (-shift) + 'px'; }
+    if (R.introPrompt) R.introPrompt.style.top = (vh / 2 + shift + envH / 2 + pGap) + 'px';
   }
 
   // ---- intro sequence ----
@@ -781,6 +798,7 @@ class Component extends DCLogic {
     const A = this.A, R = this.R;
     cancelAnimationFrame(this.raf);
     A.phase = 'idle'; A.heroCued = false; this.curT = 0;
+    this.layout();
     R.overlay.getAnimations().forEach(a => a.cancel());
     R.overlay.style.display = ''; R.overlay.style.opacity = '1';
     document.documentElement.style.overflow = 'hidden';
@@ -796,6 +814,7 @@ class Component extends DCLogic {
     if (this.A.phase !== 'idle') return;
     this.byKey = !!(e && e.detail === 0);
     this.A.phase = 'playing'; this.A.t0 = performance.now();
+    if (this.shift && this.R.scene) { const sc = this.R.scene; sc.style.transition = 'top .7s cubic-bezier(.22,1,.36,1), bottom .7s cubic-bezier(.22,1,.36,1)'; sc.style.top = '0px'; sc.style.bottom = '0px'; this.shift = 0; }
   };
   skip = () => {
     const A = this.A, R = this.R;
