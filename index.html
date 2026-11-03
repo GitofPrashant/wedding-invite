@@ -12,6 +12,17 @@
 <link rel="icon" href="assets/img/seal-icon.png">
 <link rel="apple-touch-icon" href="assets/img/seal-icon.png">
 <style>
+/* Scroll-down hint on the hero */
+.scroll-cue { position:absolute; left:50%; bottom:calc(18px + env(safe-area-inset-bottom, 0px)); transform:translateX(-50%); z-index:5; display:flex; flex-direction:column; align-items:center; gap:8px; padding:6px 12px; background:none; border:0; color:#FBE9DF; cursor:pointer; opacity:0; animation:scrollCueIn 1s ease 1.6s forwards; transition:opacity .4s ease; -webkit-tap-highlight-color:transparent; }
+.scroll-cue.is-hidden { opacity:0 !important; pointer-events:none; animation:none; }
+.scroll-cue__label { font-family:'Jost',system-ui,sans-serif; font-size:10px; letter-spacing:.32em; text-transform:uppercase; padding-left:.32em; opacity:.8; }
+.scroll-cue__track { position:relative; width:1px; height:38px; background:linear-gradient(to bottom, rgba(231,203,138,.0), rgba(231,203,138,.55)); overflow:hidden; }
+.scroll-cue__dot { position:absolute; left:-2px; top:-6px; width:5px; height:5px; border-radius:50%; background:#E8CB8A; box-shadow:0 0 6px rgba(232,203,138,.8); animation:scrollCueDot 2.2s cubic-bezier(.45,0,.55,1) infinite; }
+.scroll-cue:focus-visible { outline:1px solid #E8CB8A; outline-offset:4px; border-radius:6px; }
+@keyframes scrollCueIn { to { opacity:.9; } }
+@keyframes scrollCueDot { 0% { transform:translateY(0); opacity:0; } 20% { opacity:1; } 80% { opacity:1; } 100% { transform:translateY(44px); opacity:0; } }
+@media (max-height: 600px) { .scroll-cue { bottom:calc(max(0px, 600px - 100vh) + 8px + env(safe-area-inset-bottom, 0px)); gap:5px; } .scroll-cue__track { height:24px; } .scroll-cue__label { display:none; } @keyframes scrollCueDot { 100% { transform:translateY(30px); opacity:0; } } }
+@media (prefers-reduced-motion: reduce) { .scroll-cue__dot { animation:none; top:16px; opacity:1; } }
 /* Small-phone fixes */
 @media (max-width: 420px) {
   .skip-btn { top: 12px !important; right: 12px !important; padding: 0 14px !important; font-size: 10.5px !important; letter-spacing: .2em !important; min-height: 40px !important; }
@@ -583,6 +594,10 @@ input::placeholder,textarea::placeholder{color:#9a8a7c}
       <div style="display:flex; flex-direction:column; align-items:center; gap:8px; min-width:52px"><span style="font-family:'Bodoni Moda',serif; font-size:clamp(30px,4vw,46px); line-height:1; font-variant-numeric:tabular-nums">{{ cd.s }}</span><span style="font-size:12px; letter-spacing:.3em; text-transform:uppercase; color:#F6D7C8">Seconds</span></div>
     </div>
   </div>
+  <button type="button" class="scroll-cue" aria-label="Scroll down to the invitation">
+    <span class="scroll-cue__label">Scroll</span>
+    <span class="scroll-cue__track" aria-hidden="true"><span class="scroll-cue__dot"></span></span>
+  </button>
 </section>
 
 <section id="couple" data-screen-label="Bride and Groom" style="position:relative; overflow:hidden; background:radial-gradient(ellipse 80% 70% at 50% 45%, #FDEAE1 0%, #F6D3C6 70%, #F0C4B5 100%); min-height:100svh; box-sizing:border-box; display:flex; flex-direction:column; justify-content:center; padding:clamp(56px,9vh,104px) clamp(24px,7vw,72px)">
@@ -672,7 +687,7 @@ input::placeholder,textarea::placeholder{color:#9a8a7c}
       <p style="margin:0; font-size:12px; letter-spacing:.34em; text-transform:uppercase; color:#E8CB8A">WITH BEST WISHES FROM</p>
       <div style="display:flex; flex-direction:column; align-items:center; gap:4px; font-family:'Cormorant Garamond',serif; font-weight:600; font-size:clamp(19px,2vw,24px); line-height:1.5; color:#FFF6F0" data-comment-anchor="aceb93e671-div">
         <span>Mrs. Kanchan Manohar Parate · </span>
-        <span>Mr. Manohar Sudamji Parate · </span>
+        <span>Mr. Manohar Sudam Parate · </span>
         <span>Mr. Akshay Kumar Manohar Parate. </span>
       </div>
       <p style="margin:2px 0 0; font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:500; font-size:clamp(18px,1.8vw,21px); line-height:1.5; color:#F6D7C8">The entire Parate family and relatives</p>
@@ -1029,4 +1044,21 @@ class Component extends DCLogic {
 </script>
 
 
+<script>
+/* Scroll cue: tap to go to the invitation; fades away once the guest scrolls. */
+(function(){
+  function cue(){ return document.querySelector('.scroll-cue'); }
+  document.addEventListener('click', function(e){
+    var c = e.target.closest && e.target.closest('.scroll-cue'); if(!c) return;
+    var t = document.getElementById('couple'); if(!t) return;
+    var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({ top: t.getBoundingClientRect().top + window.scrollY, behavior: reduce ? 'auto' : 'smooth' });
+  });
+  var ticking=false;
+  window.addEventListener('scroll', function(){
+    if(ticking) return; ticking=true;
+    requestAnimationFrame(function(){ ticking=false; var c=cue(); if(c) c.classList.toggle('is-hidden', window.scrollY > 60); });
+  }, {passive:true});
+})();
+</script>
 </body></html>
