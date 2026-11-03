@@ -642,7 +642,7 @@ input::placeholder,textarea::placeholder{color:#9a8a7c}
               </div>
               <p style="margin:-4px 0 0; font-family:'Bodoni Moda',serif; font-style:italic; font-size:18px; line-height:1.2; color:#A64F4C">{{ ev.tag }}</p>
               <dl style="margin:2px 0 0; width:100%; display:flex; flex-direction:column; gap:12px">
-                <div style="display:flex; flex-direction:column; gap:4px"><dt style="font-size:12px; letter-spacing:.3em; text-transform:uppercase; color:#7D5E27">When</dt><dd style="margin:0; font-family:'Bodoni Moda',serif; font-size:16px; line-height:1.45; color:#241D1A">{{ ev.date }}<br>{{ ev.time }}</dd></div>
+                <div style="display:flex; flex-direction:column; gap:4px"><dt style="font-size:12px; letter-spacing:.3em; text-transform:uppercase; color:#7D5E27">When</dt><dd style="margin:0; font-family:'Bodoni Moda',serif; font-size:16px; line-height:1.45; color:#241D1A; text-wrap:balance"><strong style="display:block; white-space:nowrap; font-weight:600; font-size:min(1.06em, 4.6vw); line-height:1.35; margin-bottom:2px">{{ ev.date }}</strong>{{ ev.time }}</dd></div>
                 <div style="display:flex; flex-direction:column; gap:4px"><dt style="font-size:12px; letter-spacing:.3em; text-transform:uppercase; color:#7D5E27">Where</dt><dd style="margin:0; font-family:'Bodoni Moda',serif; font-size:16px; line-height:1.45; color:#241D1A; text-wrap:balance"><strong style="display:block; white-space:nowrap; font-weight:600; font-size:min(1.06em, 4.6vw); line-height:1.35; margin-bottom:2px">{{ ev.venueName }}</strong>{{ ev.venue }}</dd></div>
               </dl>
               <p style="margin:2px 0 0; max-width:30ch; font-size:14px; line-height:1.65; color:#4a3b33; text-wrap:pretty">{{ ev.desc }}</p>
