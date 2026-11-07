@@ -32,6 +32,12 @@
 @keyframes scrollCueDot { 0% { transform:translateY(0); opacity:0; } 20% { opacity:1; } 80% { opacity:1; } 100% { transform:translateY(44px); opacity:0; } }
 @media (max-height: 600px) { .scroll-cue { bottom:calc(max(0px, 600px - 100vh) + 8px + env(safe-area-inset-bottom, 0px)); gap:5px; } .scroll-cue__track { height:24px; } .scroll-cue__label { display:none; } @keyframes scrollCueDot { 100% { transform:translateY(30px); opacity:0; } } }
 @media (prefers-reduced-motion: reduce) { .scroll-cue__dot { animation:none; top:16px; opacity:1; } }
+/* Google Maps link in event cards */
+.map-link { display:flex; width:fit-content; margin:12px auto 0; align-items:center; gap:7px; padding:8px 16px 8px 13px; min-height:40px; box-sizing:border-box; border-radius:999px; border:1px solid rgba(166,118,62,.55); background:linear-gradient(180deg, rgba(255,250,244,.9), rgba(247,229,214,.9)); color:#7A3E3C; font-family:'Jost',system-ui,sans-serif; font-size:12.5px; font-weight:500; letter-spacing:.08em; text-transform:uppercase; text-decoration:none; white-space:nowrap; box-shadow:0 1px 0 rgba(255,255,255,.8) inset, 0 3px 10px -4px rgba(110,48,50,.35); transition:transform .2s ease, box-shadow .2s ease, background-color .2s ease; -webkit-tap-highlight-color:transparent; }
+.map-link svg { color:#B9853F; flex:none; }
+.map-link:hover { transform:translateY(-1px); box-shadow:0 1px 0 rgba(255,255,255,.8) inset, 0 6px 14px -6px rgba(110,48,50,.45); }
+.map-link:active { transform:translateY(0); }
+.map-link:focus-visible { outline:2px solid #B9853F; outline-offset:3px; }
 /* Small-phone fixes */
 @media (max-width: 420px) {
   .skip-btn { top: 12px !important; right: 12px !important; padding: 0 14px !important; font-size: 10.5px !important; letter-spacing: .2em !important; min-height: 40px !important; }
@@ -667,7 +673,7 @@ input::placeholder,textarea::placeholder{color:#9a8a7c}
               <p style="margin:-4px 0 0; font-family:'Bodoni Moda',serif; font-style:italic; font-size:18px; line-height:1.2; color:#A64F4C">{{ ev.tag }}</p>
               <dl style="margin:2px 0 0; width:100%; display:flex; flex-direction:column; gap:12px">
                 <div style="display:flex; flex-direction:column; gap:4px"><dt style="font-size:12px; letter-spacing:.3em; text-transform:uppercase; color:#7D5E27">When</dt><dd style="margin:0; font-family:'Bodoni Moda',serif; font-size:16px; line-height:1.45; color:#241D1A; text-wrap:balance"><strong style="display:block; white-space:nowrap; font-weight:600; font-size:min(1.06em, 4.6vw); line-height:1.35; margin-bottom:2px">{{ ev.date }}</strong>{{ ev.time }}</dd></div>
-                <div style="display:flex; flex-direction:column; gap:4px"><dt style="font-size:12px; letter-spacing:.3em; text-transform:uppercase; color:#7D5E27">Where</dt><dd style="margin:0; font-family:'Bodoni Moda',serif; font-size:16px; line-height:1.45; color:#241D1A; text-wrap:balance"><strong style="display:block; white-space:nowrap; font-weight:600; font-size:min(1.06em, 4.6vw); line-height:1.35; margin-bottom:2px">{{ ev.venueName }}</strong>{{ ev.venue }}</dd></div>
+                <div style="display:flex; flex-direction:column; gap:4px"><dt style="font-size:12px; letter-spacing:.3em; text-transform:uppercase; color:#7D5E27">Where</dt><dd style="margin:0; font-family:'Bodoni Moda',serif; font-size:16px; line-height:1.45; color:#241D1A; text-wrap:balance"><strong style="display:block; white-space:nowrap; font-weight:600; font-size:min(1.06em, 4.6vw); line-height:1.35; margin-bottom:2px">{{ ev.venueName }}</strong>{{ ev.venue }}<a class="map-link" href="https://www.google.com/maps/search/?api=1&amp;query=Rama+Celebrations+Hudkeshwar+Nagpur&amp;query_place_id=ChIJLbctINi51DsRUppf8sK7ZVA" target="_blank" rel="noopener" aria-label="Open Rama Celebration and Resort in Google Maps"><svg aria-hidden="true" viewBox="0 0 24 24" width="15" height="15"><path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5Z"/></svg><span>View on Google Maps</span></a></dd></div>
               </dl>
               <p style="margin:2px 0 0; max-width:30ch; font-size:14px; line-height:1.65; color:#4a3b33; text-wrap:pretty">{{ ev.desc }}</p>
               </div>
